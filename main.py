@@ -1,11 +1,10 @@
 import time
-from app.login import Login
-from app import driver
+from app import createDriver
+from app.bot import Bot
 
-_login = Login()
+bot = Bot(createDriver())
 
 if __name__ == "__main__":
-    _login.loginUser()
-    time.sleep(120)
-    driver.quit()
+    bot.login.loginUser()
+    bot.login.logoutUser()
 

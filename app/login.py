@@ -7,43 +7,100 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 import time
 
+
 class Login():
     def __init__(self, driver: webdriver.Chrome):
-        self.driver: webdriver.Chrome = driver
+        self.__driver: webdriver.Chrome = driver
         self.__is_logged_in: bool = False
-        self.__try: int = 0
+        self.__tries: int = 0
+        self.__wait = lambda : WebDriverWait(self.driver, randint(18, 20))
+        self.wait = self.__wait()
 
-    def loginUser(self):
-        self.__try += 1
-        self.driver.get("https://www.zalando-lounge.pl/#/")
+    @property
+    def driver(self):
+        return self.__driver
+    
+    @driver.setter
+    def driver(self, driver: webdriver.Chrome):
+        self.__driver = driver
 
-        WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//span[@id="topbar-cta-btn"]'))).click()
-        WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-form"]/div/div/div/div/div[2]/div/div[2]/div/div/div/div/div[1]/div/div/div/button'))).click()
-        WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-email"]'))).send_keys('m0ni3v@gmail.com')
-        WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-password"]'))).send_keys('1488Monieev!')
-        WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button'))).click()
+    @property
+    def is_logged_in(self):
+        return self.__is_logged_in
 
-        potential_error = WebDriverWait(self.driver, randint(1, 14)).until(EC.presence_of_all_elements_located((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[1]/div/div')))
-        time.sleep(3)
+    @is_logged_in.setter
+    def is_logged_in(self, value: bool):
+        self.__is_logged_in = value
 
-        if potential_error is not None and self.driver.current_url != "https://www.zalando-lounge.pl/event#":
-            self.driver.back()
-            WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-form"]/div/div/div/div/div[2]/div/div[2]/div/div/div/div/div[1]/div/div/div/button'))).click()
-            WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-email"]'))).send_keys(USER_MAIL)
-            WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-password"]'))).send_keys(PASSWORD)
-            WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button'))).click()
-        else:
-            self.__is_logged_in = True
-        if not self.__is_logged_in and self.__try < 5:
-            time.sleep(1)
-            self.loginUser()
+    @property
+    def tries(self):
+        return self.__tries
 
-    def logoutUser(self):
-        if self.__is_logged_in:
+    @tries.setter
+    def tries(self, value: int):
+        self.__tries = value
+
+    def loginUser(self) -> None:
+        self.tries += 1
+
+        if self.driver.current_url != "https://www.zalando-lounge.pl/event#":
             self.driver.get("https://www.zalando-lounge.pl/#/")
-            WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//button[@id="nav-to-myaccount"]'))).click()
-            WebDriverWait(self.driver, randint(1, 14)).until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]'))).click()
-            self.__is_logged_in = False
-            self.__try = 0
+        if self.is_logged_in is not True and self.driver.current_url != "https://www.zalando-lounge.pl/event#":
+            login_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="topbar-cta-btn"]')))
+            login_button.click()
+            second_login_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-form"]/div/div/div/div/div[2]/div/div[2]/div/div/div/div/div[1]/div/div/div/button')))
+            second_login_button.click()
 
+            email = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-email"]')))
+            password = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-password"]')))
+
+            email.send_keys(USER_MAIL)
+            password.send_keys(PASSWORD)
+            
+            continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
+            continue_button.click()
+            
+        if self.driver.current_url != "https://www.zalando-lounge.pl/event#":
+            potential_error = self.wait.until(EC.presence_of_all_elements_located((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[1]/div/div')))
+            time.sleep(randint(3, 5))
+
+        if self.driver.current_url != "https://www.zalando-lounge.pl/event#" and potential_error is not None:
+            self.driver.back()
+            login_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-form"]/div/div/div/div/div[2]/div/div[2]/div/div/div/div/div[1]/div/div/div/button')))
+            login_button.click()
+
+            email = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-email"]')))
+            password = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-password"]')))
+
+            email.send_keys(USER_MAIL)
+            password.send_keys(PASSWORD)
+
+            continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
+            continue_button.click()
+        else:
+            self.is_logged_in = True
+            '''SQL TRIGGER'''
+        if not self.is_logged_in and self.tries < 5:
+            time.sleep(randint(1, 3))
+            self.loginUser()
+            return
+        if not self.is_logged_in and self.tries > 5:
+            '''SQL TRIGGER'''
+            self.driver.quit()
+            return
+            
+    def logoutUser(self) -> None:
+        if self.is_logged_in:
+            self.driver.get("https://www.zalando-lounge.pl/#/")
+            account_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="nav-to-myaccount"]')))
+            account_button.click()
+
+            logout_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]')))
+            logout_button.click()
+            '''SQL TRIGGER'''
+            
+            self.is_logged_in = False
+            self.tries = 0
+            return
+    
     

@@ -1,4 +1,4 @@
-from app.settings import DATABASE_URL
+from app.settings import DATABASE_URL, PROXY_IP_PORT
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -11,17 +11,14 @@ from random_user_agent.params import SoftwareName, OperatingSystem
 from typing import Union
 from webdriver_manager.chrome import ChromeDriverManager
 
-def scrapProxy() -> list[str]:
+def scrapProxies() -> list[str]:
     pass
-
 
 def createDriver(proxy: bool = False) -> webdriver.Chrome:
     options=Options()
     software_names = [SoftwareName.CHROME.value]
     operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
     user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=1000)
-    
-    proxy_ip_port = '20.219.235.172:3129'
 
     options.add_experimental_option("useAutomationExtension", False)
     options.add_experimental_option("excludeSwitches", ["enable-automation"]) 
@@ -34,7 +31,7 @@ def createDriver(proxy: bool = False) -> webdriver.Chrome:
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--incognito")
     if proxy:
-        options.add_argument(f"--proxy-server={proxy_ip_port}")
+        options.add_argument(f"--proxy-server={PROXY_IP_PORT}")
     options.add_argument("--ignore-certificate-errors")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.set_window_position(0,0) 
@@ -88,5 +85,5 @@ def asyncSessionLoader() -> async_sessionmaker[AsyncSession]:
     return session
 
 
-def run():
+def run(bots: int):
     pass

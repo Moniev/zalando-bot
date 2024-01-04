@@ -2,9 +2,12 @@ import time
 from app import createDriver
 from app.bot import Bot
 
-bot = Bot(createDriver())
+driver = createDriver(proxy=False)
+bot = Bot(driver=driver)
 
 if __name__ == "__main__":
-    bot.login.loginUser()
+    if bot.operations is not None:
+        bot.operations.checkForUpcomingDrops() 
     bot.login.logoutUser()
-
+    time.sleep(5)
+    bot.driver.quit()

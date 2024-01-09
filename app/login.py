@@ -1,4 +1,5 @@
 
+import app.crud
 from app.settings import USER_MAIL, PASSWORD
 from random import randint
 from selenium import webdriver
@@ -57,12 +58,14 @@ class Login():
             email.send_keys(USER_MAIL)
             password.send_keys(PASSWORD)
             
+            time.sleep(randint(2, 5))
+
             continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
             continue_button.click()
             
         if self.driver.current_url != "https://www.zalando-lounge.pl/event#":
             potential_error = self.wait.until(EC.presence_of_all_elements_located((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[1]/div/div')))
-            time.sleep(randint(3, 5))
+            time.sleep(randint(5, 7))
 
         if self.driver.current_url != "https://www.zalando-lounge.pl/event#" and potential_error is not None:
             self.driver.back()
@@ -75,13 +78,16 @@ class Login():
             email.send_keys(USER_MAIL)
             password.send_keys(PASSWORD)
 
+            time.sleep(randint(2, 5))
+
             continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
             continue_button.click()
         else:
             self.is_logged_in = True
             '''SQL TRIGGER'''
+            
         if not self.is_logged_in and self.tries < 5:
-            time.sleep(randint(1, 3))
+            time.sleep(randint(4, 5))
             self.loginUser()
             return
         if not self.is_logged_in and self.tries > 5:

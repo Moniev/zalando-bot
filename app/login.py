@@ -1,6 +1,8 @@
 
-import app.crud
+from app.crud import CRUD
+from app.models import Login, Logout as _Login, Logout
 from app.settings import USER_MAIL, PASSWORD
+from datetime import datetime
 from random import randint
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,12 +12,17 @@ import time
 
 
 class Login():
-    def __init__(self, driver: webdriver.Chrome):
+    def __init__(self, crud: CRUD, driver: webdriver.Chrome, id: int):
+        self.__id: int = id
+        self.__crud: CRUD = crud
         self.__driver: webdriver.Chrome = driver
         self.__is_logged_in: bool = False
         self.__tries: int = 0
-        self.__wait = lambda : WebDriverWait(self.driver, randint(18, 20))
-        self.wait = self.__wait()
+        self.__wait: WebDriverWait = lambda : WebDriverWait(self.driver, randint(18, 20))
+
+    @property
+    def crud(self):
+        return self.__crud
 
     @property
     def driver(self):
@@ -40,6 +47,10 @@ class Login():
     @tries.setter
     def tries(self, value: int):
         self.__tries = value
+
+    @property
+    def wait(self) -> WebDriverWait:
+        return self.__wait()
 
     def loginUser(self) -> None:
         self.tries += 1
@@ -84,14 +95,15 @@ class Login():
             continue_button.click()
         else:
             self.is_logged_in = True
-            '''SQL TRIGGER'''
             
+            login: _Login = _Login(self.id, date_time=datetime.now())
+            self.crud.add(login)
+
         if not self.is_logged_in and self.tries < 5:
             time.sleep(randint(4, 5))
             self.loginUser()
             return
         if not self.is_logged_in and self.tries > 5:
-            '''SQL TRIGGER'''
             self.driver.quit()
             return
             
@@ -103,7 +115,9 @@ class Login():
 
             logout_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]')))
             logout_button.click()
-            '''SQL TRIGGER'''
+            
+            logout: Logout = Logout(user_id=self.id, date_time=datetime.now())
+            self.crud.add(logout)
             
             self.is_logged_in = False
             self.tries = 0

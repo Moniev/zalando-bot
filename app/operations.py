@@ -1,5 +1,6 @@
-import app.crud
+from app.crud import CRUD
 from app.utils import strToDatetime, calculateDateFromNow
+from app.models import UpcomingDrop, OpenDrop
 from datetime import datetime
 from datetime import timedelta
 import inspect
@@ -14,38 +15,14 @@ import time
 
 
 class Operations():
-    def __init__(self, driver: webdriver.Chrome):
-        self.__driver: webdriver.Chrome = driver
+    def __init__(self, driver: webdriver.Chrome, crud: CRUD):
         self.__cart: list[str] = []
         self.__cart_worth: int = 0
         self.__cash: float = 0
+        self.__crud: CRUD = crud
+        self.__driver: webdriver.Chrome = driver
         self.__hunted_items: list[str] = []
-        self.__wait = lambda: WebDriverWait(self.driver, randint(14, 20))
-        self.wait = self.__wait()
-
-    @property
-    def driver(self):
-        return self.__driver
-    
-    @driver.setter
-    def driver(self, driver: webdriver.Chrome):
-        self.__driver = driver
-
-    @property
-    def cash(self):
-        return self.__cash
-    
-    @cash.setter
-    def cash(self, value: float):
-        self.__cash = value
-
-    @property
-    def hunted_items(self):
-        return self.__hunted_items
-    
-    @hunted_items.setter
-    def hunted_items(self, hunted_items: list[int]):
-        self.__hunted_items = hunted_items
+        self.__wait: WebDriverWait = lambda: WebDriverWait(self.driver, randint(14, 20))
 
     @property
     def cart(self):
@@ -63,7 +40,39 @@ class Operations():
     def cart_worth(self, cart_worth: float):
         self.__cart_worth = cart_worth
 
-    def checkForAlreadyOpenDrops(self):
+    @property
+    def cash(self):
+        return self.__cash
+    
+    @cash.setter
+    def cash(self, value: float):
+        self.__cash = value
+
+    @property
+    def crud(self):
+        return self.__crud
+
+    @property
+    def driver(self):
+        return self.__driver
+    
+    @driver.setter
+    def driver(self, driver: webdriver.Chrome):
+        self.__driver = driver
+
+    @property
+    def hunted_items(self):
+        return self.__hunted_items
+    
+    @hunted_items.setter
+    def hunted_items(self, hunted_items: list[int]):
+        self.__hunted_items = hunted_items
+
+    @property
+    def wait(self) -> WebDriverWait:
+        return self.__wait()
+
+    async def checkForAlreadyOpenDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
         self.driver.get("https://www.zalando-lounge.pl")
@@ -77,16 +86,18 @@ class Operations():
             drops: list[WebElement] = self.driver.find_elements(By.XPATH, '//a[starts-with(@id, "open-ZZO2")]')
             
             for notification in drops:
-                id: str = notification.get_attribute("id")[-7:]
+                website_id: str = notification.get_attribute("id")[-7:]
                 title: str = notification.find_element(By.XPATH, './/div[@id="image_wrappper"]/img').get_attribute("alt")
                 time_left: str = notification.find_element(By.XPATH, './/div[@class="campaign-cardstyles__InnerWrapper-sc-1ye77dr-4 eRKwns"]/div/div/div/div/div[2]/div[1]/span[2]/span/span').text
                 
-                end_date: datetime = calculateDateFromNow(time_left)
+                end_datetime: datetime = await calculateDateFromNow(time_left)
+                drop: OpenDrop = OpenDrop(website_id=website_id, title=title, end_datetime=end_datetime)
+                await self.crud.add(drop)
 
-                print(i, id, end_date, title)
+                print(i, website_id, end_datetime, title)
                 i += 1
                 
-    def checkForUpcomingDrops(self):
+    async def checkForUpcomingDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
         self.driver.get("https://www.zalando-lounge.pl")
@@ -100,19 +111,21 @@ class Operations():
             events: list[WebElement] = self.driver.find_elements(By.XPATH, '//div[starts-with(@id, "upcoming-ZZO2")]')
             
             for notification in events:
-                id: str = notification.get_attribute("id")[-7:]
+                website_id: str = notification.get_attribute("id")[-7:]
                 title: str = notification.find_element(By.XPATH, './/div[@class="InfoWrapper-sc-5c8jzs bAKWAQ"]/div/button').get_attribute("aria-label")
                 date: str = notification.find_element(By.XPATH, './/div[@class="InfoWrapper-sc-5c8jzs bAKWAQ"]/div/div/div/span[2]/span/span').text
                 
-                data: datetime = calculateDateFromNow(date)
+                open_datetime: datetime = await calculateDateFromNow(date)
+                drop: UpcomingDrop = UpcomingDrop(website_id=website_id, title=title, open_datetime=open_datetime)
+                await self.crud.add(drop)
 
-                print(i, id, data, title)
+                print(i, website_id, date, title)
                 i += 1
 
-    def getCartWorth(self) -> float:
+    async def getCartWorth(self) -> float:
         func_name = inspect.stack()[0][3]
-        print(func_name)       
-        if not self.isCartEmpty():
+        print(func_name)    
+        if not await self.isCartEmpty() :
             cart_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
             cart_button.click()
             cart_worth: str = self.driver.find_element(By.XPATH, '//*[@class="Wrapper-sc-va3ki5 jDtuT"]/div/div/p[3]/span[2]').text[:-3].replace(",", '.')
@@ -126,10 +139,10 @@ class Operations():
         self.cart_worth = 0
         return 0
 
-    def emptyCart(self) -> None:
+    async def emptyCart(self) -> None:
         func_name = inspect.stack()[0][3]
-        print(func_name)
-        if not self.isCartEmpty():
+        print(func_name)    
+        if not await self.isCartEmpty() :
             cart_button: WebElement  = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
             cart_button.click()
 
@@ -141,18 +154,18 @@ class Operations():
             self.cart.clear()
             cart_button.click()
 
-    def addItemsToCart(self) -> None:
+    async def addItemsToCart(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         start_cart_time = datetime.now()
         end_cart_time = start_cart_time + timedelta(minutes=20)
         
-    def setTimeOfDrop(self) -> None:
+    async def setTimeOfDrop(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         pass
 
-    def isCartEmpty(self) -> bool:
+    async def isCartEmpty(self) -> bool:
         func_name = inspect.stack()[0][3]
         print(func_name)
         cart_button: WebElement  = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
@@ -161,7 +174,7 @@ class Operations():
         cart_button.click()
         return len(items) == 0
 
-    def checkCart(self) -> None:
+    async def checkCart(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         cart_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
@@ -178,7 +191,7 @@ class Operations():
         
         cart_button.click()
 
-    def compareCarts(self) -> None:
+    async def compareCarts(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         cart_button: WebElement = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
@@ -187,17 +200,19 @@ class Operations():
         cart_button.click()
         return len(self.cart) == len(items)
         
-    def cashout(self) -> None:
+    async def cashout(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         if self.cash - self.cart_worth >= 0:
-            cart_button: WebElement  = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
+            cart_button: WebElement = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
             cart_button.click()
-            cashout_button: WebElement  = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="Wrapper-sc-8so8sv cLunUE"]')))
-            
-            if self.driver.current_url == "https://www.zalando-lounge.pl/checkout/payment":
-                pass
+            cashout_button: WebElement = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="Wrapper-sc-8so8sv cLunUE"]')))
+            cashout_button.click()
 
+            if self.driver.current_url == "https://www.zalando-lounge.pl/checkout/":
+                cashout_button: WebElement = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-container"]/div/div[2]/main/div/div/div[2]/div[6]/div[1]/button')))
+                cashout_button.click()
+    
     def __repr__(self):
         pass
 

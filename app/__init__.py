@@ -1,5 +1,4 @@
 from app.settings import DATABASE_URL, manifest_json, background_js
-from app.bot import Bot
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -13,10 +12,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 import zipfile
 
 def createDriver(proxy: bool = False, already_open: bool = False) -> webdriver.Chrome:
-    options = Options()
-    software_names = [SoftwareName.CHROME.value]
-    operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
-    user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=1000)
+    options: Options = Options()
+    operating_systems: list[OperatingSystem] = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
+    software_names: list[SoftwareName] = [SoftwareName.CHROME.value]
+    user_agent_rotator: UserAgent = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=1000)
     
     if proxy:
         pluginfile = 'proxy_auth_plugin.zip'
@@ -78,15 +77,6 @@ def makeAsyncConnection() -> AsyncEngine | None:
 
 connection: AsyncEngine = makeAsyncConnection()
 
-'''ASYNC POSTGRES INITIALIZATION'''
-async def createDatabase() -> None:
-    connection: AsyncEngine = makeAsyncConnection()
-    async with connection.begin() as _connection:
-        from app.models import Cart, Item, User, CreditCard
-        await _connection.run_sync(Base.metadata.drop_all)
-        await _connection.run_sync(Base.metadata.create_all)
-    await connection.dispose()
-
 '''ASYNC POSTGRES SESSION OBJECT'''
 def asyncSessionLoader() -> async_sessionmaker[AsyncSession]:
     session: AsyncSession = async_sessionmaker(
@@ -95,13 +85,23 @@ def asyncSessionLoader() -> async_sessionmaker[AsyncSession]:
     )
     return session
 
+'''ASYNC POSTGRES INITIALIZATION'''
+async def createDatabase() -> None:
+    connection: AsyncEngine = makeAsyncConnection()
+    async with connection.begin() as _connection:
+        from app.models import Cart, CreditCard, Item, Login, Logout, Operation, OpenDrop, UpcomingDrop, User
+        await _connection.run_sync(Base.metadata.drop_all)
+        await _connection.run_sync(Base.metadata.create_all)
+    await connection.dispose()
 
-def run(bots: int, proxies: bool = False) -> None:
+async def run(bots: int = 1, proxies: bool = False) -> None:
+    from app.bot import Bot
+    await createDatabase()
     driver = createDriver()
     bot = Bot(driver=driver)
     if bot.operations is not None:
-        bot.operations.getCartWorth()
-        bot.operations.emptyCart()
-        bot.operations.checkForAlreadyOpenDrops()
+        await bot.operations.getCartWorth()
+        await bot.operations.emptyCart()
+        await bot.operations.checkForAlreadyOpenDrops()
 
     

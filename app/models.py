@@ -1,41 +1,39 @@
+from app import Base
 from datetime import datetime
-from sqlalchemy import Boolean, DateTime, ForeignKey, Float, Integer, String, select
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy import Boolean, DateTime, ForeignKey, Float, Integer, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
-class Base(DeclarativeBase):
-    pass
 
 class Cart(Base):
     __bind_key__ = "Cart"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
-    items: Mapped['Item'] = relationship("Item", backref="Cart", foreign_keys="Item.id")
+    items: Mapped['Item'] = relationship("Item", backref="Cart", foreign_keys="Item.cart_id")
     __tablename__ = "Cart"
 
-    def __init__(self, id: int, user_id: int):
-        self.id: int = id
+    def __init__(self, user_id: int):
         self.user_id: int = user_id
 
     def __repr__(self):
-        return f""
+        return f"[Cart   ][id: {self.id}][user_id: {self.user_id}]"
+
 
 class Item(Base):
     __bind_key__ = "Item"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     cart_id: Mapped[int] = mapped_column(Integer, ForeignKey("Cart.id"), nullable=False)
-    bought: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    shipped: Mapped[DateTime] = mapped_column(Boolean, nullable=False)
+    bought_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    shipped_datetime: Mapped[DateTime] = mapped_column(Boolean, nullable=False)
     __tablename__ = "Item"
 
-    def __init__(self, id: int, bought: datetime, shipped: datetime):
-        self.id: int = id
-        self.bought: datetime = bought
-        self.shipped: datetime = shipped 
+    def __init__(self, bought_datetime: datetime, shipped_datetime: datetime):
+        self.bought_datetime: datetime = bought_datetime
+        self.shipped_datetime: datetime = shipped_datetime
 
     def __repr__(self):
-        return f""
+        return f"[Item   ][id: {self.id}][cart_id: {self.cart_id}][bought: {self.bought_datetime}][shipped: {self.shipped_datetime}]"
+
 
 class User(Base):
     __bind_key__ = "User"
@@ -43,70 +41,89 @@ class User(Base):
     nickname: Mapped[str] = mapped_column(String, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False)
-    registration: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    registration_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False)
     cart: Mapped['Cart'] = relationship("Cart", backref="User", foreign_keys="Cart.user_id") 
-    logins: Mapped['Login'] = relationship("Login", backref="User")
-    logouts: Mapped['Logout'] = relationship("Logout", backref="User")
+    logins: Mapped['Login'] = relationship("Login", backref="User", foreign_keys="Login.user_id")
+    logouts: Mapped['Logout'] = relationship("Logout", backref="User", foreign_keys="Logout.user_id")
     __tablename__ = "User"
 
-    def __init__(self, id: int, nickname: str, password: str, email: str, registration: DateTime, active: bool):
-        self.id: int = id
+    def __init__(self, nickname: str, password: str, email: str, registration_datetime: datetime, active: bool):
         self.nickname: str = nickname
         self.password: str = password
         self.email: str = email
-        self.registration: DateTime = registration
+        self.registration_datetime: datetime = registration_datetime
         self.active: bool = active
 
     def __repr__(self):
-        return f""
+        return f"[User   ][id: {self.id}][nickname: {self.nickname}][password: {self.password}][email: {self.email}][registration: {self.registration}][active: {self.active}]"
     
+
 class Login(Base):
     __bind_key__ = "Login"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
     success: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    __tablename__ = "User"
+    date_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    __tablename__ = "Login"
 
-    def __init__(self, id: int, user_id: int, date: DateTime):
-        self.id: int = id
+    def __init__(self, user_id: int, date_time: datetime):
         self.user_id: int = user_id
-        self.date: DateTime = date 
+        self.date_time:  datetime =  datetime 
 
     def __repr__(self):
-        return f""
+        return f"[Login   ][id: {self.id}][user_id: {self.user_id}][success: {self.success}][date: {self.date}]"
+
 
 class Logout(Base):
     __bind_key__ = "Logout"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
     success: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    date_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     __tablename__ = "Logout"
 
-    def __init__(self, id: int, user_id: int, date: DateTime):
-        self.id: int = id
+    def __init__(self, user_id: int, date_time: datetime):
         self.user_id: int = user_id
-        self.date: DateTime = date 
+        self.date_time: datetime =  date_time 
 
     def __repr__(self):
-        return
+        return f"[Logout   ][id: {self.id}][user_id: {self.user_id}][success: {self.success}][date: {self.date}]"
 
-class Drop(Base):
-    __bind_key__ = "Drop"
+
+class UpcomingDrop(Base):
+    __bind_key__ = "UpcomingDrop"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
+    website_id: Mapped[str] = mapped_column(String, nullable=False)
     title: Mapped[String] = mapped_column(String, nullable=False)
-    drop_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    __tablename__ = "Drop"
+    open_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    __tablename__ = "UpcomingDrop"
 
-    def __init__(self, id: int, item_id: str, title: str, drop_date: DateTime):
-        self.id: int = id
+    def __init__(self, website_id: str, title: str, open_datetime: datetime):
+        self.website_id: str = website_id
         self.title: str = title 
-        self.drop_date: DateTime = drop_date
+        self.open_datetime: datetime = open_datetime
 
     def __repr__(self):
-        return f"[drop   ][id: {self.id}][title: {self.title}][drop_date: {self.drop_date}]"
+        return f"[UpcomingDrop   ][id: {self.id}][title: {self.title}][drop_date: {self.drop_date}]"
+
+
+class OpenDrop(Base):
+    __bind_key__ = "OpenDrop" 
+    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
+    website_id: Mapped[str] = mapped_column(String, nullable=False)
+    title: Mapped[String] = mapped_column(String, nullable=False)
+    end_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    __tablename__ = "OpenDrop"
+
+    def __init__(self, website_id: str, title: str, end_datetime: datetime):
+        self.website_id: str = website_id
+        self.title: str = title 
+        self.end_datetime: datetime = end_datetime
+
+    def __repr__(self):
+        return f"[OpenDrop   ][id: {self.id}][title: {self.title}][drop_date: {self.drop_date}]"
+
 
 class CreditCard(Base):
     __bind_key__ = "CreditCard"
@@ -116,11 +133,28 @@ class CreditCard(Base):
     used: Mapped[bool] = mapped_column(Boolean, nullable=False) 
     __tablename__ = "CreditCard"
 
-    def __init__(self, id: int, credit_card_id: str, cash_left: float, used: bool):
-        self.id: int = id
+    def __init__(self, credit_card_id: str, cash_left: float, used: bool):
         self.credit_card_id: str = credit_card_id
         self.cash_left: bool = cash_left
         self.used: bool = used
 
     def __repr__(self):
-        return f"[credit_card   ][id: {self.id}][credit_cart_id: {self.credit_card_id}][cash_left: {self.cash_left}][used: {self.used}]"
+        return f"[CreditCard   ][id: {self.id}][credit_cart_id: {self.credit_card_id}][cash_left: {self.cash_left}][used: {self.used}]"
+    
+
+class Operation(Base):
+    __bind_key__ = "Operation"
+    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    operation_name: Mapped[str] = mapped_column(String, nullable=False)
+    success: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    __tablename__ = "Operation"
+
+    def __init__(self, user_id: int, operation_name: str, success: bool):
+        self.user_id: int = user_id
+        self.operation_name: str = operation_name
+        self.success: bool = success
+
+    def __repr__(self):
+        return f"[Operation   ][id: {self.id}][user_id: {self.user_id}][operation_name: {self.operation_name}][success: {self.success}]"
+

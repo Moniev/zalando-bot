@@ -1,10 +1,10 @@
-from pathlib import Path
+import hashlib
 from random import randint
+from app.utils import generateRandomString
 
-USERS = {1:{'m0ni3v@gmail.com':'1488Monieev!','is_beeing_used':False}, 2:{}}
+USERS = {1: {'m0ni3v@gmail.com': '1488Monieev!', 'is_beeing_used': False}, 2: {}}
 
-
-i = randint(0, 10)
+SALT = generateRandomString(64)
 
 PROXY_HOST = '109.61.89.1'
 PROXY_PORT = '10623'

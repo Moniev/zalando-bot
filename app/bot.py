@@ -1,19 +1,21 @@
+from app.crud import CRUD
 from app.login import Login
-from app.buy import Operations 
+from app.operations import Operations 
 from selenium import webdriver
 
 class Bot():
     def __init__(self, driver: webdriver.Chrome):
+        self.crud: CRUD = CRUD()
         self.proxies: list[str] = []
-        self.login: Login = Login(driver)
+        self.login: Login = Login(driver, self.crud)
         self.login.loginUser()
         self.driver: webdriver.Chrome = driver
-        self.operations: Operations | None = Operations(self.driver) if self.login.is_logged_in else None
+        self.operations: Operations | None = Operations(self.driver, self.crud) if self.login.is_logged_in else None
 
-    def scrapProxies(self):
+    async def scrapProxies(self):
         pass
 
-    def testConnection(self, proxy_ip_port: str):
+    async def testConnection(self, proxy_ip_port: str):
         pass
 
     def __del__(self):

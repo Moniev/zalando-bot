@@ -12,7 +12,7 @@ import time
 
 
 class Login():
-    def __init__(self, crud: CRUD, driver: webdriver.Chrome, id: int):
+    def __init__(self, crud: CRUD, driver: webdriver.Chrome, id: int=1):
         self.__id: int = id
         self.__crud: CRUD = crud
         self.__driver: webdriver.Chrome = driver
@@ -52,7 +52,7 @@ class Login():
     def wait(self) -> WebDriverWait:
         return self.__wait()
 
-    def loginUser(self) -> None:
+    async def loginUser(self) -> None:
         self.tries += 1
 
         if self.driver.current_url != "https://www.zalando-lounge.pl/event#":
@@ -96,7 +96,7 @@ class Login():
         else:
             self.is_logged_in = True
             
-            login: _Login = _Login(self.id, date_time=datetime.now())
+            login: _Login = _Login(user_id=self.id)
             self.crud.add(login)
 
         if not self.is_logged_in and self.tries < 5:
@@ -107,7 +107,7 @@ class Login():
             self.driver.quit()
             return
             
-    def logoutUser(self) -> None:
+    async def logoutUser(self) -> None:
         if self.is_logged_in:
             self.driver.get("https://www.zalando-lounge.pl/#/")
             account_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="nav-to-myaccount"]')))
@@ -116,7 +116,7 @@ class Login():
             logout_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]')))
             logout_button.click()
             
-            logout: Logout = Logout(user_id=self.id, date_time=datetime.now())
+            logout: Logout = Logout(user_id=self.id)
             self.crud.add(logout)
             
             self.is_logged_in = False

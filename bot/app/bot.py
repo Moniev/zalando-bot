@@ -4,13 +4,16 @@ from app.operations import Operations
 from selenium import webdriver
 
 class Bot():
+    
     def __init__(self, driver: webdriver.Chrome):
         self.crud: CRUD = CRUD()
         self.proxies: list[str] = []
-        self.login: Login = Login(driver, self.crud)
-        self.login.loginUser()
+        self.login: Login = Login(crud=self.crud, driver=driver)    
         self.driver: webdriver.Chrome = driver
         self.operations: Operations | None = Operations(self.driver, self.crud) if self.login.is_logged_in else None
+
+    async def __aenter__(self):
+        await self.login.loginUser()
 
     async def scrapProxies(self):
         pass
@@ -18,6 +21,6 @@ class Bot():
     async def testConnection(self, proxy_ip_port: str):
         pass
 
-    def __del__(self):
-        self.login.logoutUser()
-        self.driver.quit()
+    async def __aexit__(self, *args):
+        await self.login.logoutUser()
+        await self.driver.quit()

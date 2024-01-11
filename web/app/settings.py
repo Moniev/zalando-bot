@@ -1,0 +1,1 @@
+DATABASE_URL = 'postgresql+asyncpg://postgres:1488@localhost:5432/seba_bot'

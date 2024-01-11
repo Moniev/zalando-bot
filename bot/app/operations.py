@@ -11,18 +11,26 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 from selenium.webdriver.remote.webelement import WebElement
-import time
 
 
 class Operations():
-    def __init__(self, driver: webdriver.Chrome, crud: CRUD):
+    def __init__(self, driver: webdriver.Chrome, crud: CRUD, drop_date: datetime):
         self.__cart: list[str] = []
         self.__cart_worth: int = 0
         self.__cash: float = 0
         self.__crud: CRUD = crud
         self.__driver: webdriver.Chrome = driver
+        self.__drop_date: datetime = drop_date
         self.__hunted_items: list[str] = []
         self.__wait: WebDriverWait = lambda: WebDriverWait(self.driver, randint(14, 20))
+        
+    @property
+    def drop_date(self):
+        return self.__drop_date
+    
+    @drop_date.setter
+    def drop_date(self, drop_date: datetime):
+        self.__drop_date = drop_date
 
     @property
     def cart(self):
@@ -129,9 +137,7 @@ class Operations():
             cart_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="header-cart"]')))
             cart_button.click()
             cart_worth: str = self.driver.find_element(By.XPATH, '//*[@class="Wrapper-sc-va3ki5 jDtuT"]/div/div/p[3]/span[2]').text[:-3].replace(",", '.')
-            cart_worth: float = float(cart_worth)
-            print(cart_worth)
-            
+            cart_worth: float = float(cart_worth)            
             cart_button.click()
             self.cart_worth = cart_worth
             return cart_worth

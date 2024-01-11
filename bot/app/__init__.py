@@ -97,11 +97,12 @@ async def createDatabase() -> None:
 async def run(bots: int = 1, proxies: bool = False) -> None:
     from app.bot import Bot
     await createDatabase()
-    driver = createDriver()
-    bot = Bot(driver=driver)
-    if bot.operations is not None:
-        await bot.operations.getCartWorth()
-        await bot.operations.emptyCart()
-        await bot.operations.checkForAlreadyOpenDrops()
+    driver: webdriver.Chrome = createDriver()
+    async with Bot(driver=driver) as bot:
+        bot: Bot
+        if bot.operations is not None:
+            await bot.operations.getCartWorth()
+            await bot.operations.emptyCart()
+            await bot.operations.checkForAlreadyOpenDrops()
 
     

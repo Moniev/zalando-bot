@@ -1,8 +1,7 @@
 from app import Base
 from datetime import datetime
 from sqlalchemy import Boolean, DateTime, ForeignKey, Float, Integer, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 class Cart(Base):
@@ -64,7 +63,7 @@ class Login(Base):
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
     success: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    date_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    date_time: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Login"
 
     def __init__(self, user_id: int, date_time: datetime):
@@ -80,7 +79,7 @@ class Logout(Base):
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
     success: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    date_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    date_time: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Logout"
 
     def __init__(self, user_id: int, date_time: datetime):
@@ -105,7 +104,7 @@ class UpcomingDrop(Base):
         self.open_datetime: datetime = open_datetime
 
     def __repr__(self):
-        return f"[UpcomingDrop   ][id: {self.id}][title: {self.title}][drop_date: {self.drop_date}]"
+        return f"[UpcomingDrop   ][id: {self.id}][title: {self.title}][drop_date: {self.open_datetime}]"
 
 
 class OpenDrop(Base):
@@ -122,7 +121,7 @@ class OpenDrop(Base):
         self.end_datetime: datetime = end_datetime
 
     def __repr__(self):
-        return f"[OpenDrop   ][id: {self.id}][title: {self.title}][drop_date: {self.drop_date}]"
+        return f"[OpenDrop   ][id: {self.id}][title: {self.title}][drop_date: {self.end_datetime}]"
 
 
 class CreditCard(Base):
@@ -157,4 +156,3 @@ class Operation(Base):
 
     def __repr__(self):
         return f"[Operation   ][id: {self.id}][user_id: {self.user_id}][operation_name: {self.operation_name}][success: {self.success}]"
-

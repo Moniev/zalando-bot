@@ -1,5 +1,5 @@
 from app.crud import CRUD
-from app.utils import strToDatetime, calculateDateFromNow
+from app.utils import strToDatetime, calculateDateFromNow, registerOperation
 from app.models import UpcomingDrop, OpenDrop
 from datetime import datetime
 from datetime import timedelta
@@ -14,20 +14,21 @@ from selenium.webdriver.remote.webelement import WebElement
 
 
 class Operations():
-    def __init__(self, driver: webdriver.Chrome, crud: CRUD, drop_date: datetime):
+    def __init__(self, driver: webdriver.Chrome, crud: CRUD, drop_date: datetime, id: int, *hunted_drops: str):
         self.__cart: list[str] = []
         self.__cart_worth: int = 0
         self.__cash: float = 0
         self.__crud: CRUD = crud
         self.__driver: webdriver.Chrome = driver
         self.__drop_date: datetime = drop_date
-        self.__hunted_items: list[str] = []
+        self.__hunted_drops: list[str] = [*hunted_drops]
+        self.__id: int = id
         self.__wait: WebDriverWait = lambda: WebDriverWait(self.driver, randint(14, 20))
-        
+            
     @property
     def drop_date(self):
         return self.__drop_date
-    
+
     @drop_date.setter
     def drop_date(self, drop_date: datetime):
         self.__drop_date = drop_date
@@ -77,9 +78,14 @@ class Operations():
         self.__hunted_items = hunted_items
 
     @property
+    def id(self):
+        return self.__id
+
+    @property
     def wait(self) -> WebDriverWait:
         return self.__wait()
 
+    @registerOperation
     async def checkForAlreadyOpenDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -104,7 +110,8 @@ class Operations():
 
                 print(i, website_id, end_datetime, title)
                 i += 1
-                
+
+    @registerOperation         
     async def checkForUpcomingDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -130,6 +137,7 @@ class Operations():
                 print(i, website_id, date, title)
                 i += 1
 
+    @registerOperation     
     async def getCartWorth(self) -> float:
         func_name = inspect.stack()[0][3]
         print(func_name)    
@@ -144,6 +152,7 @@ class Operations():
         
         self.cart_worth = 0
         return 0
+
 
     async def emptyCart(self) -> None:
         func_name = inspect.stack()[0][3]
@@ -222,5 +231,3 @@ class Operations():
     def __repr__(self):
         pass
 
-    def __del__(self):
-        pass

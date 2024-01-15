@@ -5,12 +5,17 @@ from selenium import webdriver
 
 class Bot():
     
-    def __init__(self, driver: webdriver.Chrome):
-        self.crud: CRUD = CRUD()
+    def __init__(self, driver: webdriver.Chrome, id: int):
+        self.__id: int = id 
+        self.crud: CRUD = CRUD(id=self.id)
         self.proxies: list[str] = []
-        self.login: Login = Login(crud=self.crud, driver=driver)    
+        self.login: Login = Login(crud=self.crud, driver=driver, id=self.id)    
         self.driver: webdriver.Chrome = driver
-        self.operations: Operations | None = Operations(self.driver, self.crud) if self.login.is_logged_in else None
+        self.operations: Operations | None = Operations(self.driver, self.crud, id=self.id) if self.login.is_logged_in else None
+
+    @property
+    def id(self):
+        return self.__id
 
     async def __aenter__(self):
         await self.login.loginUser()

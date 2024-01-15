@@ -1,5 +1,6 @@
-import datetime, random, string, inspect
-
+import datetime
+import random, string, inspect
+from functools import wraps
 
 async def calculateDateFromNow(date: str) -> datetime.datetime | None:
     if 'd' in date and 'h' in date and 'm' in date:
@@ -29,3 +30,13 @@ def generateRandomString(n: int) -> str:
     random_string = ''.join(random.SystemRandom().choice(string.digits + string.ascii_letters + string.punctuation) for i in range(n))
     return random_string
 
+def registerOperation(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        start: datetime.datetime = datetime.datetime.now()
+        
+        result = func(*args, **kwargs)
+        
+        end: datetime.datetime = datetime.datetime.now()
+        return result
+    return wrapper

@@ -18,7 +18,7 @@ class Login():
         self.__driver: webdriver.Chrome = driver
         self.__is_logged_in: bool = False
         self.__tries: int = 0
-        self.__wait: WebDriverWait = lambda : WebDriverWait(self.driver, randint(18, 20))
+        self.__wait: WebDriverWait = lambda : WebDriverWait(self.driver, randint(9, 64))
 
     @property
     def crud(self):
@@ -31,6 +31,10 @@ class Login():
     @driver.setter
     def driver(self, driver: webdriver.Chrome):
         self.__driver = driver
+
+    @property
+    def id(self):
+        return self.__id
 
     @property
     def is_logged_in(self):
@@ -96,12 +100,12 @@ class Login():
         else:
             self.is_logged_in = True
             
-            login: _Login = _Login(user_id=self.id)
+            login: _Login = _Login(user_id=self.id, date_time=datetime.now())
             self.crud.add(login)
 
         if not self.is_logged_in and self.tries < 5:
             time.sleep(randint(4, 5))
-            self.loginUser()
+            await self.loginUser()
             return
         if not self.is_logged_in and self.tries > 5:
             self.driver.quit()
@@ -116,7 +120,7 @@ class Login():
             logout_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]')))
             logout_button.click()
             
-            logout: Logout = Logout(user_id=self.id)
+            logout: Logout = Logout(user_id=self.id, date_time=datetime.now())
             self.crud.add(logout)
             
             self.is_logged_in = False

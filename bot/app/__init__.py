@@ -94,15 +94,16 @@ async def createDatabase() -> None:
         await _connection.run_sync(Base.metadata.create_all)
     await connection.dispose()
 
-async def run(bots: int = 1, proxies: bool = False) -> None:
+async def botLoop(bots: int = 1, proxies: bool = False) -> None:
     from app.bot import Bot
     await createDatabase()
+
     driver: webdriver.Chrome = createDriver()
-    async with Bot(driver=driver) as bot:
-        bot: Bot
-        if bot.operations is not None:
-            await bot.operations.getCartWorth()
-            await bot.operations.emptyCart()
-            await bot.operations.checkForAlreadyOpenDrops()
+    bot: Bot = Bot(driver=driver)
+
+    if bot.operations is not None:
+        await bot.operations.getCartWorth()
+        await bot.operations.emptyCart()
+        await bot.operations.checkForAlreadyOpenDrops()
 
     

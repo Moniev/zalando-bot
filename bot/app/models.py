@@ -66,8 +66,9 @@ class Login(Base):
     date_time: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Login"
 
-    def __init__(self, user_id: int, date_time: datetime):
+    def __init__(self, user_id: int, success: bool, date_time: datetime):
         self.user_id: int = user_id
+        self.success: bool = success
         self.date_time:  datetime =  datetime 
 
     def __repr__(self):
@@ -82,8 +83,9 @@ class Logout(Base):
     date_time: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Logout"
 
-    def __init__(self, user_id: int, date_time: datetime):
+    def __init__(self, user_id: int, success: bool, date_time: datetime):
         self.user_id: int = user_id
+        self.success: bool = success
         self.date_time: datetime =  date_time 
 
     def __repr__(self):

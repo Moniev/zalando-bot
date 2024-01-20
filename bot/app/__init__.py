@@ -99,11 +99,11 @@ async def botLoop(bots: int = 1, proxies: bool = False) -> None:
     await createDatabase()
 
     driver: webdriver.Chrome = createDriver()
-    bot: Bot = Bot(driver=driver)
-
-    if bot.operations is not None:
-        await bot.operations.getCartWorth()
-        await bot.operations.emptyCart()
-        await bot.operations.checkForAlreadyOpenDrops()
+    async with Bot(driver=driver, id=1) as bot:
+        bot: Bot
+        if bot.operations is not None:
+            await bot.operations.getCartWorth()
+            await bot.operations.emptyCart()
+            await bot.operations.checkForAlreadyOpenDrops()
 
     

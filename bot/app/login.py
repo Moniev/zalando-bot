@@ -1,8 +1,10 @@
 
 from app.crud import CRUD
-from app.models import Login, Logout as _Login, Logout
+from app.models import Login, Logout as _Login, Logout, Operation
 from app.settings import USER_MAIL, PASSWORD
-from datetime import datetime
+from datetime import datetime, timedelta
+from functools import wraps
+import inspect
 from random import randint
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,6 +12,28 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 import time
 
+def registerOperation(func):
+    @wraps(func)
+    async def wrapper(self, *args, **kwargs):
+        start: datetime = datetime.now()
+        result = await func(*args, **kwargs)
+        end: datetime = datetime.now()
+        execution_time: timedelta = end - start
+        operation: Operation = Operation(self.id, func.__name__, True)
+        await self.crud.add(operation)
+        return result
+    return wrapper
+
+def debugHelper(func):
+    @wraps(func)
+    def wrapper(self, *args):
+        start: datetime = datetime.now()
+        print(func.__name__, execution_time)
+        result = func(*args)
+        end: datetime = datetime.now()
+        execution_time: timedelta = end - start
+        return result
+    return wrapper
 
 class Login():
     def __init__(self, crud: CRUD, driver: webdriver.Chrome, id: int=1):
@@ -56,7 +80,11 @@ class Login():
     def wait(self) -> WebDriverWait:
         return self.__wait()
 
+    @registerOperation 
     async def loginUser(self) -> None:
+        func_name = inspect.stack()[0][3]
+        print(func_name)
+
         self.tries += 1
 
         if self.driver.current_url != "https://www.zalando-lounge.pl/event#":
@@ -100,18 +128,21 @@ class Login():
         else:
             self.is_logged_in = True
             
-            login: _Login = _Login(user_id=self.id, date_time=datetime.now())
-            self.crud.add(login)
+            login: _Login = _Login(user_id=self.id, success=True, date_time=datetime.now())
+            await self.crud.add(login)
 
         if not self.is_logged_in and self.tries < 5:
             time.sleep(randint(4, 5))
             await self.loginUser()
             return
         if not self.is_logged_in and self.tries > 5:
-            self.driver.quit()
             return
             
+    @registerOperation 
     async def logoutUser(self) -> None:
+        func_name = inspect.stack()[0][3]
+        print(func_name)
+        
         if self.is_logged_in:
             self.driver.get("https://www.zalando-lounge.pl/#/")
             account_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="nav-to-myaccount"]')))
@@ -120,8 +151,8 @@ class Login():
             logout_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]')))
             logout_button.click()
             
-            logout: Logout = Logout(user_id=self.id, date_time=datetime.now())
-            self.crud.add(logout)
+            logout: Logout = Logout(user_id=self.id, success=True, date_time=datetime.now())
+            await self.crud.add(logout)
             
             self.is_logged_in = False
             self.tries = 0

@@ -11,11 +11,14 @@ class Bot():
         self.proxies: list[str] = []
         self.login: Login = Login(crud=self.crud, driver=driver, id=self.id)    
         self.driver: webdriver.Chrome = driver
-        self.operations: Operations | None = Operations(self.driver, self.crud, id=self.id) if self.login.is_logged_in else None
+        self.operations: Operations | None = Operations(self.driver, self.crud, drop_date=None, id=self.id) if self.login.is_logged_in else None
 
     @property
     def id(self):
         return self.__id
+
+    def __enter__(self):
+        return self
 
     async def __aenter__(self):
         await self.login.loginUser()

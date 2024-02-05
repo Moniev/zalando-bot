@@ -97,7 +97,7 @@ class Operations():
     def wait(self) -> WebDriverWait:
         return self.__wait()
 
-    @registerOperation 
+
     async def checkForAlreadyOpenDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -123,7 +123,7 @@ class Operations():
                 print(i, website_id, end_datetime, title)
                 i += 1
 
-    @registerOperation 
+
     async def checkForUpcomingDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -149,7 +149,7 @@ class Operations():
                 print(i, website_id, date, title)
                 i += 1
 
-    @registerOperation 
+
     async def getCartWorth(self) -> float:
         func_name = inspect.stack()[0][3]
         print(func_name)    
@@ -165,7 +165,7 @@ class Operations():
         self.cart_worth = 0
         return 0
 
-    @registerOperation 
+
     async def emptyCart(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)    
@@ -181,20 +181,20 @@ class Operations():
             self.cart.clear()
             cart_button.click()
 
-    @registerOperation 
+
     async def addItemsToCart(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         start_cart_time = datetime.now()
         end_cart_time = start_cart_time + timedelta(minutes=20)
 
-    @registerOperation 
+
     async def setTimeOfDrop(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
         pass
 
-    @registerOperation 
+
     async def isCartEmpty(self) -> bool:
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -204,7 +204,7 @@ class Operations():
         cart_button.click()
         return len(items) == 0
 
-    @registerOperation 
+
     async def checkCart(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -222,7 +222,6 @@ class Operations():
         
         cart_button.click()
 
-    @registerOperation 
     async def compareCarts(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -232,7 +231,7 @@ class Operations():
         cart_button.click()
         return len(self.cart) == len(items)
         
-    @registerOperation 
+
     async def cashout(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)

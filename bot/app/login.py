@@ -80,7 +80,6 @@ class Login():
     def wait(self) -> WebDriverWait:
         return self.__wait()
 
-    @registerOperation 
     async def loginUser(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -138,7 +137,6 @@ class Login():
         if not self.is_logged_in and self.tries > 5:
             return
             
-    @registerOperation 
     async def logoutUser(self) -> None:
         func_name = inspect.stack()[0][3]
         print(func_name)

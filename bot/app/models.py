@@ -45,6 +45,8 @@ class User(Base):
     cart: Mapped['Cart'] = relationship("Cart", backref="User", foreign_keys="Cart.user_id") 
     logins: Mapped['Login'] = relationship("Login", backref="User", foreign_keys="Login.user_id")
     logouts: Mapped['Logout'] = relationship("Logout", backref="User", foreign_keys="Logout.user_id")
+    website_logins: Mapped['WebsiteLoginInfo'] = relationship("WebsiteLoginInfo", backref="User", foreign_keys="WebsiteLoginInfo.user_id")
+    website_logouts: Mapped['WebsiteLogoutInfo'] = relationship("WebsiteLogoutInfo", backref="User", foreign_keys="WebsiteLogoutInfo.user_id")
     __tablename__ = "User"
 
     def __init__(self, nickname: str, password: str, email: str, registration_datetime: datetime, active: bool):
@@ -146,7 +148,7 @@ class CreditCard(Base):
 class Operation(Base):
     __bind_key__ = "Operation"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
     operation_name: Mapped[str] = mapped_column(String, nullable=False)
     success: Mapped[bool] = mapped_column(Boolean, nullable=False)
     __tablename__ = "Operation"
@@ -159,3 +161,30 @@ class Operation(Base):
     def __repr__(self):
         return f"[Operation   ][id: {self.id}][user_id: {self.user_id}][operation_name: {self.operation_name}][success: {self.success}]"
 
+
+class WebsiteLoginInfo(Base):
+    __bind_key__ = "WebsiteLoginInfo"
+    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
+    date_time: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
+    __tablename__ = "WebsiteLoginInfo"
+
+    def __init__(self, user_id: int):
+        self.user_id: int = user_id
+
+    def __repr__(self):
+        return f"[WebsiteLoginInfo   ][id: {self.id}][user_id: {self.user_id}][date_time: {self.date_time}]"
+    
+
+class WebsiteLogoutInfo(Base):
+    __bind_key__ = "WebsiteLogoutInfo"
+    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
+    date_time: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
+    __tablename__ = "WebsiteLogoutInfo"
+
+    def __init__(self, user_id: int):
+        self.user_id: int = user_id
+
+    def __repr__(self):
+        return f"[WebsiteLogoutInfo   ][id: {self.id}][user_id: {self.user_id}][date_time: {self.date_time}]"

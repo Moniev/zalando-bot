@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Cart(models.Model):
-    user = models.ForeignKey('User', models.CASCADE)
+    user = models.ForeignKey('User', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -27,7 +27,7 @@ class Creditcard(models.Model):
 
 
 class Item(models.Model):
-    cart = models.ForeignKey(Cart, models.CASCADE)
+    cart = models.ForeignKey(Cart, models.DO_NOTHING)
     bought_datetime = models.DateTimeField()
     shipped_datetime = models.BooleanField()
 
@@ -37,7 +37,7 @@ class Item(models.Model):
 
 
 class Login(models.Model):
-    user = models.ForeignKey('User', models.CASCADE)
+    user = models.ForeignKey('User', models.DO_NOTHING)
     success = models.BooleanField()
     date_time = models.DateTimeField()
 
@@ -47,7 +47,7 @@ class Login(models.Model):
 
 
 class Logout(models.Model):
-    user = models.ForeignKey('User', models.CASCADE)
+    user = models.ForeignKey('User', models.DO_NOTHING)
     success = models.BooleanField()
     date_time = models.DateTimeField()
 
@@ -67,7 +67,7 @@ class Opendrop(models.Model):
 
 
 class Operation(models.Model):
-    user_id = models.IntegerField()
+    user = models.ForeignKey('User', models.DO_NOTHING)
     operation_name = models.CharField()
     success = models.BooleanField()
 
@@ -96,6 +96,24 @@ class User(models.Model):
     class Meta:
         managed = False
         db_table = 'User'
+
+
+class Websitelogininfo(models.Model):
+    user = models.ForeignKey(User, models.DO_NOTHING)
+    date_time = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'WebsiteLoginInfo'
+
+
+class Websitelogoutinfo(models.Model):
+    user = models.ForeignKey(User, models.DO_NOTHING)
+    date_time = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'WebsiteLogoutInfo'
 
 
 class AuthGroup(models.Model):
@@ -167,6 +185,96 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
+class ControllerCart(models.Model):
+    user_id = models.ForeignKey('ControllerUser', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'controller_cart'
+
+
+class ControllerCreditcard(models.Model):
+    credit_card_id = models.CharField()
+    cash_left = models.FloatField()
+    used = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'controller_creditcard'
+
+
+class ControllerItem(models.Model):
+    bought_datetime = models.DateTimeField()
+    shipped_datetime = models.DateTimeField()
+    cart_id = models.ForeignKey(ControllerCart, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'controller_item'
+
+
+class ControllerLogin(models.Model):
+    success = models.BooleanField()
+    date_time = models.DateTimeField()
+    user_id = models.ForeignKey('ControllerUser', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'controller_login'
+
+
+class ControllerLogout(models.Model):
+    success = models.BooleanField()
+    date_time = models.DateTimeField()
+    user_id = models.ForeignKey('ControllerUser', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'controller_logout'
+
+
+class ControllerOpendrop(models.Model):
+    website_id = models.IntegerField()
+    title = models.CharField()
+    end_datetime = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'controller_opendrop'
+
+
+class ControllerOperation(models.Model):
+    operation_name = models.CharField()
+    success = models.BooleanField()
+    user_id_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'controller_operation'
+
+
+class ControllerUpcomingdrop(models.Model):
+    website_id = models.IntegerField()
+    title = models.CharField()
+    open_datetime = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'controller_upcomingdrop'
+
+
+class ControllerUser(models.Model):
+    nickname = models.CharField()
+    password = models.CharField()
+    email = models.CharField()
+    registration_datetime = models.DateTimeField()
+    active = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'controller_user'
+
+
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
     object_id = models.TextField(blank=True, null=True)
@@ -210,3 +318,21 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
+
+
+class UsersWebsitelogininfo(models.Model):
+    date_time = models.DateTimeField()
+    user_id = models.ForeignKey(ControllerUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'users_websitelogininfo'
+
+
+class UsersWebsitelogoutinfo(models.Model):
+    date_time = models.DateTimeField()
+    user_id = models.ForeignKey(ControllerUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'users_websitelogoutinfo'

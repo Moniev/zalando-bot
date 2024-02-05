@@ -1,0 +1,8 @@
+{% extends "controller/base.html" %}
+{% block content %}
+    <h2>Zostałeś wylogowany!</h2>
+    <div class="border-top pt-3">
+        <small class="text-muted">Zaloguj się jeszcze raz <a class="ml-2" href="{% url 'login' %}">Zaloguj się!</a>
+        </small>
+    </div>
+{% endblock content %}

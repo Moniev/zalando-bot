@@ -4,13 +4,32 @@
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Logowanie</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Zaloguj się!</button>
+            <legend class="border-bottom mb-4">Logowanie</legend>
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+                <input type="username" id="username" class="form-control" name="username"/>
+                <label class="form-label" for="username">Nazwa użytkownika</label>
             </div>
+            <!-- Password input -->
+            <div class="form-outline mb-4">
+                <input type="password" id="password" class="form-control" name="password"/>
+                <label class="form-label" for="password">Hasło</label>
+            </div>
+            <!-- 2 column grid layout for inline styling -->
+            <div class="row mb-4">
+                <div class="col d-flex justify-content-center">
+                <!-- Checkbox -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkbox" name="checkbox" checked />
+                    <label class="form-check-label" for="checkbox"> Zapamiętaj mnie </label>
+                </div>
+                <div class="col">
+                <!-- Simple link -->
+                    <a href="#!">Zapomniałeś hasła?</a>
+                </div>
+            </div>
+                <!-- Submit button -->
+            <button type="submit" class="btn btn-primary btn-block mb-4">Zaloguj się!</button>
         </form>
         <div class="border-top pt-3">
             <small class="text-muted">Nie masz konta? <a class="ml-2" href="{% url 'register' %}">Zarejestruj się!</a>

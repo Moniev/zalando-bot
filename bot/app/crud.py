@@ -42,4 +42,11 @@ class CRUD():
             await session.close()
             return item
         
-
+    async def deleteAllItems(self, item: object, async_session: async_sessionmaker[AsyncSession]=asyncSessionLoader()) -> None:
+        async with async_session() as session:
+            statement: Select = select(item).order_by(item.id)
+            result = await session.execute(statement=statement)
+            for item in result.scalars():
+                session.delete(item)
+            await session.refresh()
+            await session.close()

@@ -37,7 +37,7 @@ class Item(Base):
 class User(Base):
     __bind_key__ = "User"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
-    nickname: Mapped[str] = mapped_column(String, nullable=False)
+    username: Mapped[str] = mapped_column(String, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False)
     registration_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)

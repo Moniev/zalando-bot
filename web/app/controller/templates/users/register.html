@@ -4,16 +4,57 @@
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Join Today</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Sign Up</button>
-            </div>
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                  <label for="validationServer01">Twój pseudonim</label>
+                  <input type="text" class="form-control is-valid" id="username" placeholder="pseudonim" name="username" required>
+                  <div class="invalid-feedback">
+                    Wprowadź swój pseudonim.
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="validationServerUsername">Email</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="inputGroupPrepend3">@</span>
+                    </div>
+                    <input type="text" class="form-control is-invalid" id="email" placeholder="Email" aria-describedby="inputGroupPrepend3" name="email" required>
+                    <div class="invalid-feedback">
+                      Wprowadź swój email.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-md-6 mb-3">
+                  <label for="validationServer03">Hasło</label>
+                  <input type="password" class="form-control is-invalid" id="password1" placeholder="********" name="password1" required>
+                  <div class="invalid-feedback">
+                    Wprowadź swoje hasło.
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="validationServer03">Powtórz hasło</label>
+                    <input type="password" class="form-control is-invalid" id="password2" placeholder="********" name="password2" required>
+                    <div class="invalid-feedback">
+                      Powtórz swoje hasło.
+                    </div>
+                </div>
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input is-invalid" type="checkbox" value="" id="invalidCheck3" required>
+                  <label class="form-check-label" for="invalidCheck3">
+                    Agree to terms and conditions
+                  </label>
+                  <div class="invalid-feedback">
+                    You must agree before submitting.
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit">Zarejestruj się</button>
         </form>
         <div class="border-top pt-3">
-            <small class="text-muted">Already have an account? <a class="ml-2" href="{% url 'login' %}">Sign in</a></small>
+            <small class="text-muted">Masz już konto? <a class="ml-2" href="{% url 'login' %}">Zaloguj się</a></small>
         </div>
     </div>
 {% endblock content %}s

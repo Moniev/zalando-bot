@@ -97,7 +97,6 @@ class Operations():
     def wait(self) -> WebDriverWait:
         return self.__wait()
 
-
     async def checkForAlreadyOpenDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -123,7 +122,6 @@ class Operations():
                 print(i, website_id, end_datetime, title)
                 i += 1
 
-
     async def checkForUpcomingDrops(self):
         func_name = inspect.stack()[0][3]
         print(func_name)
@@ -145,10 +143,20 @@ class Operations():
                 open_datetime: datetime = await calculateDateFromNow(date)
                 drop: UpcomingDrop = UpcomingDrop(website_id=website_id, title=title, open_datetime=open_datetime)
                 await self.crud.add(drop)
-
                 print(i, website_id, date, title)
                 i += 1
 
+    async def refreshUpcomingDropsDatabase(self) -> None:
+        func_name = inspect.stack()[0][3]
+        print(func_name)  
+        await self.crud.deleteAllItems(UpcomingDrop)
+        await self.checkForUpcomingDrops()
+
+    async def refreshOpenDropsDatabase(self) -> None:
+        func_name = inspect.stack()[0][3]
+        print(func_name)  
+        await self.crud.deleteAllItems(OpenDrop)
+        await self.checkForUpcomingDrops()
 
     async def getCartWorth(self) -> float:
         func_name = inspect.stack()[0][3]
@@ -164,7 +172,6 @@ class Operations():
         
         self.cart_worth = 0
         return 0
-
 
     async def emptyCart(self) -> None:
         func_name = inspect.stack()[0][3]

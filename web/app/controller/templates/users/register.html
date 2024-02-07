@@ -5,14 +5,14 @@
         <form method="POST">
             {% csrf_token %}
             <div class="form-row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-12 mb-3">
                   <label for="validationServer01">Twój pseudonim</label>
                   <input type="text" class="form-control is-valid" id="username" placeholder="pseudonim" name="username" required>
                   <div class="invalid-feedback">
                     Wprowadź swój pseudonim.
                   </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-12 mb-3">
                   <label for="validationServerUsername">Email</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
@@ -26,14 +26,14 @@
                 </div>
               </div>
               <div class="form-row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                   <label for="validationServer03">Hasło</label>
                   <input type="password" class="form-control is-invalid" id="password1" placeholder="********" name="password1" required>
                   <div class="invalid-feedback">
                     Wprowadź swoje hasło.
                   </div>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                     <label for="validationServer03">Powtórz hasło</label>
                     <input type="password" class="form-control is-invalid" id="password2" placeholder="********" name="password2" required>
                     <div class="invalid-feedback">
@@ -52,6 +52,7 @@
                 </div>
               </div>
               <button class="btn btn-primary" type="submit">Zarejestruj się</button>
+          </div>
         </form>
         <div class="border-top pt-3">
             <small class="text-muted">Masz już konto? <a class="ml-2" href="{% url 'login' %}">Zaloguj się</a></small>

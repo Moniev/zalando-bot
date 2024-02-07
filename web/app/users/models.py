@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractUser
 from controller.models import User
+from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
+from datetime import datetime
+
 
 # Create your models here.
 class WebsiteLoginInfo(models.Model):
@@ -16,15 +18,39 @@ class WebsiteLogoutInfo(models.Model):
     date_time: models.DateTimeField = models.DateTimeField(default=timezone.now)
 
 
-class User(models.Model):
-    username = models.CharField()
-    password = models.CharField()
-    email = models.CharField(unique=True)
-    registration_datetime = models.DateTimeField()
-    active = models.BooleanField()
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username: str, password: str, email: str, **other_fields):
+        if not email:
+            raise ValueError
+        
+        user: AbstractUser = self.model(email=self.normalize_email(email), username=username, date_joined=timezone.now())
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, username: str, password: str, email: str, **other_fields):
+        other_fields.setdefault('is_staff', True)
+        other_fields.setdefault('is_superuser', True)
+        other_fields.setdefault('is_active', True)
+        return self.create_user(username, password, email, **other_fields)
     
+    
+class User(AbstractUser):
+    username = models.CharField(unique=True)
+    password = models.CharField(null=False)
+    email = models.CharField(unique=True)
+    date_joined = models.DateTimeField(null=True)
+    last_login = models.DateTimeField(null=True)
+    last_name = models.CharField(null=True)
+    first_name = models.CharField(null=True)
+
     USERNAME_FIELD = 'username'
 
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
 
     class Meta:
         managed = False

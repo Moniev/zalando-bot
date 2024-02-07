@@ -23,7 +23,7 @@ class Item(Base):
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     cart_id: Mapped[int] = mapped_column(Integer, ForeignKey("Cart.id"), nullable=False)
     bought_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    shipped_datetime: Mapped[DateTime] = mapped_column(Boolean, nullable=False)
+    shipped_datetime: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     __tablename__ = "Item"
 
     def __init__(self, bought_datetime: datetime, shipped_datetime: datetime):
@@ -40,8 +40,13 @@ class User(Base):
     username: Mapped[str] = mapped_column(String, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False)
-    registration_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    active: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    date_joined: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    first_name: Mapped[str] = mapped_column(String, nullable=True)
+    last_name: Mapped[str] = mapped_column(String, nullable=True)
+    last_login: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_staff: Mapped[bool] = mapped_column(Boolean, default=False)
     cart: Mapped['Cart'] = relationship("Cart", backref="User", foreign_keys="Cart.user_id") 
     logins: Mapped['Login'] = relationship("Login", backref="User", foreign_keys="Login.user_id")
     logouts: Mapped['Logout'] = relationship("Logout", backref="User", foreign_keys="Logout.user_id")
@@ -82,7 +87,7 @@ class Logout(Base):
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("User.id"), nullable=False)
     success: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    date_time: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
+    date_time: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Logout"
 
     def __init__(self, user_id: int, success: bool, date_time: datetime):
@@ -98,8 +103,8 @@ class UpcomingDrop(Base):
     __bind_key__ = "UpcomingDrop"
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     website_id: Mapped[str] = mapped_column(String, nullable=False)
-    title: Mapped[String] = mapped_column(String, nullable=False)
-    open_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    open_datetime: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     __tablename__ = "UpcomingDrop"
 
     def __init__(self, website_id: str, title: str, open_datetime: datetime):
@@ -115,8 +120,8 @@ class OpenDrop(Base):
     __bind_key__ = "OpenDrop" 
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, nullable=False, unique=True)
     website_id: Mapped[str] = mapped_column(String, nullable=False)
-    title: Mapped[String] = mapped_column(String, nullable=False)
-    end_datetime: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    end_datetime: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     __tablename__ = "OpenDrop"
 
     def __init__(self, website_id: str, title: str, end_datetime: datetime):

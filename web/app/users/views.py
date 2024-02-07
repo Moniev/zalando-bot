@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 from controller.models import OpenDrop, UpcomingDrop
 from users.models import WebsiteLoginInfo, WebsiteLogoutInfo
 from .forms import UserRegisterForm
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 def registerUser(request: HttpRequest) -> HttpResponse:    
     if request.method == "POST":

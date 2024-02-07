@@ -156,3 +156,4 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ("Bootstrap5",)
 
 LOGIN_REDIRECT_URL = 'home'
 
+AUTH_USER_MODEL = "users.User" 

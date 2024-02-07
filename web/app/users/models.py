@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 from controller.models import User
 
 # Create your models here.
@@ -18,11 +19,12 @@ class WebsiteLogoutInfo(models.Model):
 class User(models.Model):
     username = models.CharField()
     password = models.CharField()
-    email = models.CharField()
+    email = models.CharField(unique=True)
     registration_datetime = models.DateTimeField()
     active = models.BooleanField()
-
+    
     USERNAME_FIELD = 'username'
+
 
     class Meta:
         managed = False

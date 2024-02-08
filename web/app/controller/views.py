@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpRequest, request
+from django.contrib.auth.decorators import login_required
+from controller.models import OpenDrop, UpcomingDrop
+from .bot.main import run
 
 
 def home(request: HttpRequest) -> HttpResponse:
@@ -9,3 +12,17 @@ def home(request: HttpRequest) -> HttpResponse:
 def about(request: HttpRequest) -> HttpResponse:
     context: dict = {}
     return render(request, 'controller/home.html', context=context)
+
+@login_required
+def botManual(request: HttpRequest) -> HttpResponse:
+    context: dict = {} 
+    return render(request, 'controller/bot_manual.html', context=context)
+
+def drops(request: HttpRequest) -> HttpResponse:
+    open_drops = OpenDrop.objects.all()
+    upcoming_drops = UpcomingDrop.objects.all()
+
+    context: dict = {'open_drops': open_drops, 'upcoming_drops': upcoming_drops}
+    
+    return render(request, 'users/drops.html', context)
+    

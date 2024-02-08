@@ -7,6 +7,7 @@ from controller.models import OpenDrop, UpcomingDrop
 from users.models import WebsiteLoginInfo, WebsiteLogoutInfo
 from .forms import UserRegisterForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 User = get_user_model()
 
 def registerUser(request: HttpRequest) -> HttpResponse:    
@@ -46,6 +47,7 @@ def loginUser(request: HttpRequest) -> HttpResponse:
     else:
         return render(request, 'users/login.html')
 
+@login_required
 def logoutUser(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         logout_info: WebsiteLogoutInfo = WebsiteLogoutInfo(user_id=request.user)
@@ -56,11 +58,8 @@ def logoutUser(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         return render(request, 'users/logout.html')
 
-def drops(request: HttpRequest) -> HttpResponse:
-    open_drops = OpenDrop.objects.all()
-    upcoming_drops = UpcomingDrop.objects.all()
-
-    context: dict = {'open_drops': open_drops, 'upcoming_drops': upcoming_drops}
-    
-    return render(request, 'users/drops.html', context)
-    
+def profile(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        pass
+    if request.method == "GET":
+        return render(request, 'users/profile.html')

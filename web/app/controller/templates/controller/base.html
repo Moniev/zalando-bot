@@ -1,84 +1,126 @@
 {% load static %}
+{% load compress %}
 <!DOCTYPE html>
 <html>
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-      <link href="{% static 'controller/style.css' %}" rel="stylesheet" rel="stylesheet" type="text/css">
+      <link href="{% static 'controller/css/style.css' %}" rel="stylesheet" type="text/css">
+      {% compress css %}
+      <link type="text/x-scss" href="{% static 'controller/scss/style.scss' %}" rel="stylesheet" media="screen">
+      {% endcompress %}
       {% if title %}
-        <title>Django - {{ title }}</title>  
+        <title> {{ title }}</title>  
       {% else %}
-        <title>Django blog</title>
+        <title>Zalando Bot</title>
       {% endif %}
     </head>
-    <body>
-      <header class="site-header">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="#">ZalandoBot</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarText">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Strona główna</a>
+      <body>
+        <div class="wrapper d-flex align-items-stretch">
+          <nav id="sidebar">
+            <div class="p-4 pt-5">
+              <a href="#" class="img logo rounded-circle mb-5" style="background-image: url(images/logo.jpg);"></a>
+              <ul class="list-unstyled components mb-5">
+                <li class="active">
+                  <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Strona główna</a>
+                  <ul class="collapse list-unstyled" id="homeSubmenu">
+                    <li>
+                      <a href="#">Nadchodzące dropy</a>
+                    </li>
+                    <li>
+                      <a href="#">Otwarte dropy</a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="{% url 'about' %}">O kurwoniu</a>
                 </li>
                 {% if user.is_authenticated %}
-                  <form method="post" action="{% url 'logout' %}" id="logout-button">
-                    {% csrf_token %}
-                    <a class="nav-item nav-link" onclick="document.getElementById('logout-button').submit()">Logout</a>
-                  </form>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'drops' %}">Otwarte Dropy</a>
+                  <li>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Twoje dane</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                      <li>
+                          <a href="{url 'profile'}">Dane osobowe</a>
+                      </li>
+                      <li>
+                          <a href="#">Środki</a>
+                      </li>
+                      <li>
+                          <a href="#"></a>
+                      </li>
+                    </ul>
                   </li>
-                {% else %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Zarejestruj się</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Zaloguj się</a>
+                  <li>
+                    <a href="{% url 'about' %}">Historia operacji</a>
+                  </li>  
+                  <li>
+                    <a href="{% url 'bot-manual' %}">Ręczne sterowanie botem</a>
                   </li>
                 {% endif %}
               </ul>
-              <span class="navbar-text">
-                Powered by Courvogne industries
-              </span>
+              <div class="footer">     
+                <p>Powered by Courvogne industries</p>          
+              </div>
+            </div>
+          </nav>
+            <!-- Page Content  -->
+          <div id="content" class="p-4 p-md-5">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                  <i class="fa fa-bars">Menu</i>
+                  
+                </button>
+                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'home' %}">Strona głowna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">O Kurwoniu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'drops' %}">Dropy</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'shot-story' %}">Twoje strzały</a>
+                      </li>
+                      <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <li class="nav-item">
+                          <button type="submit" class="btn btn-outline-dark">Wyloguj się</button>
+                        </li>
+                      </form>
+                    {% else %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Zaloguj się</a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </nav>
+            <div>
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+              {% block content %}
+              {% endblock content %}
             </div>
           </div>
-        </nav>
-      </header>
-      {% if user.is_authenticated%}
-        <div class="col-md-4">
-          <div class="content-section">
-            <h3>Our Sidebar</h3>
-            <p class='text-muted'>You can put any information here you'd like.
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-light"><a href="{% url 'drops' %}">Dropy</a></li>
-                <li class="list-group-item list-group-item-light"><a href="{% url 'drops' %}">Twoje zakupy</a></li>
-                <li class="list-group-item list-group-item-light"><a href="{% url 'drops' %}">Zaplanuj zakup</a></li>
-                <li class="list-group-item list-group-item-light"><a href="{% url 'drops' %}">etc</a></li>
-              </ul>
-            </p>
-          </div>
         </div>
-      {% endif %}
-      <main role="main" class="container">
-        <div class="row">
-          <div class="col-md-8">
-            {% if messages %}
-              {% for message in messages %}
-                <div class="alert alert-{{message.tags}}">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            {% endif %}
-            {% block content %}
-            {% endblock content %}
-          </div>
-        </div>
-      </main>
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    </body>
+        <script src="{% static 'controller/js/jquery.min.js' %}"></script>
+        <script src="{% static 'controller/js/popper.js' %}"></script>
+        <script src="{% static 'controller/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'controller/js/main.js' %}"></script>
+      </body>
 </html>

@@ -190,96 +190,6 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
-class ControllerCart(models.Model):
-    user_id = models.ForeignKey('ControllerUser', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'controller_cart'
-
-
-class ControllerCreditcard(models.Model):
-    credit_card_id = models.CharField()
-    cash_left = models.FloatField()
-    used = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'controller_creditcard'
-
-
-class ControllerItem(models.Model):
-    bought_datetime = models.DateTimeField()
-    shipped_datetime = models.DateTimeField()
-    cart_id = models.ForeignKey(ControllerCart, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'controller_item'
-
-
-class ControllerLogin(models.Model):
-    success = models.BooleanField()
-    date_time = models.DateTimeField()
-    user_id = models.ForeignKey('ControllerUser', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'controller_login'
-
-
-class ControllerLogout(models.Model):
-    success = models.BooleanField()
-    date_time = models.DateTimeField()
-    user_id = models.ForeignKey('ControllerUser', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'controller_logout'
-
-
-class ControllerOpendrop(models.Model):
-    website_id = models.IntegerField()
-    title = models.CharField()
-    end_datetime = models.DateField()
-
-    class Meta:
-        managed = False
-        db_table = 'controller_opendrop'
-
-
-class ControllerOperation(models.Model):
-    operation_name = models.CharField()
-    success = models.BooleanField()
-    user_id_id = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'controller_operation'
-
-
-class ControllerUpcomingdrop(models.Model):
-    website_id = models.IntegerField()
-    title = models.CharField()
-    open_datetime = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'controller_upcomingdrop'
-
-
-class ControllerUser(models.Model):
-    nickname = models.CharField()
-    password = models.CharField()
-    email = models.CharField()
-    registration_datetime = models.DateTimeField()
-    active = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'controller_user'
-
-
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
     object_id = models.TextField(blank=True, null=True)
@@ -327,7 +237,7 @@ class DjangoSession(models.Model):
 
 class UsersWebsitelogininfo(models.Model):
     date_time = models.DateTimeField()
-    user_id = models.ForeignKey(ControllerUser, models.DO_NOTHING)
+    user_id = models.ForeignKey(User, models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -336,7 +246,7 @@ class UsersWebsitelogininfo(models.Model):
 
 class UsersWebsitelogoutinfo(models.Model):
     date_time = models.DateTimeField()
-    user_id = models.ForeignKey(ControllerUser, models.DO_NOTHING)
+    user_id = models.ForeignKey(User, models.DO_NOTHING)
 
     class Meta:
         managed = False

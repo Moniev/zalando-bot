@@ -11,5 +11,9 @@ urlpatterns: list = [
     path('login', UsersViews.loginUser, name='login'),
     path('logout', UsersViews.logoutUser, name='logout'),
     path('register', UsersViews.registerUser, name='register'),
-    path('drops', UsersViews.drops, name='drops'),
+    path('profile', UsersViews.registerUser, name='profile'),
+    path('drops', views.drops, name='drops'),
+    path('manual', views.botManual, name='bot-manual'),
+    path('shots', views.botManual, name='shot-story'),
+
 ]

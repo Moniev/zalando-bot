@@ -37,7 +37,7 @@ def loginUser(request: HttpRequest) -> HttpResponse:
         if user is not None:
             login(request, user)
             messages.success(request, f'Udało się Ci się zalogować {username}!')
-            login_info: WebsiteLogoutInfo = WebsiteLogoutInfo(user_id=user.id)
+            login_info: WebsiteLoginInfo = WebsiteLoginInfo(user_id=request.user)
             login_info.save()
             return redirect('home')
         else:
@@ -48,7 +48,7 @@ def loginUser(request: HttpRequest) -> HttpResponse:
 
 def logoutUser(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        logout_info: WebsiteLogoutInfo = WebsiteLogoutInfo()
+        logout_info: WebsiteLogoutInfo = WebsiteLogoutInfo(user_id=request.user)
         logout_info.save()
         logout(request=request)
         messages.success(request, 'Zostałeś wylogowany!')

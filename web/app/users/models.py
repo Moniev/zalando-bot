@@ -1,22 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from controller.models import User
-from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from datetime import datetime
-
-
-# Create your models here.
-class WebsiteLoginInfo(models.Model):
-    id: models.AutoField = models.AutoField(primary_key=True)
-    user_id: models.ForeignKey = models.ForeignKey(User, on_delete=models.CASCADE) 
-    date_time: models.DateTimeField = models.DateTimeField(default=timezone.now)
-
-
-class WebsiteLogoutInfo(models.Model):
-    id: models.AutoField = models.AutoField(primary_key=True)
-    user_id: models.ForeignKey = models.ForeignKey(User, on_delete=models.CASCADE) 
-    date_time: models.DateTimeField = models.DateTimeField(default=timezone.now)
-
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, username: str, password: str, email: str, **other_fields):
@@ -55,3 +40,18 @@ class User(AbstractUser):
     class Meta:
         managed = False
         db_table = 'User'
+
+    def __repr__(self):
+        return f"[username]: {self.username}, [email]: {self.email}"
+
+
+class WebsiteLoginInfo(models.Model):
+    id: models.AutoField = models.AutoField(primary_key=True)
+    user_id: models.ForeignKey = models.ForeignKey(User, on_delete=models.CASCADE) 
+    date_time: models.DateTimeField = models.DateTimeField(default=timezone.now)
+
+
+class WebsiteLogoutInfo(models.Model):
+    id: models.AutoField = models.AutoField(primary_key=True)
+    user_id: models.ForeignKey = models.ForeignKey(User, on_delete=models.CASCADE) 
+    date_time: models.DateTimeField = models.DateTimeField(default=timezone.now)

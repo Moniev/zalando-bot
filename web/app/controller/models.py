@@ -1,16 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.utils import timezone
-
-
-class User(models.Model):
-    id: models.AutoField = models.AutoField(primary_key=True)
-    nickname: models.CharField = models.CharField()
-    password: models.CharField = models.CharField()
-    email: models.CharField = models.CharField()
-    registration_datetime: models.DateTimeField = models.DateTimeField(default=timezone.now)
-    active: models.BooleanField = models.BooleanField(default=False)
-
+from users.models import User
 
 class Cart(models.Model):
     id: models.AutoField = models.AutoField(primary_key=True)

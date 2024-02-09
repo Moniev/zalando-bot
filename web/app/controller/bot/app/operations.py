@@ -1,6 +1,6 @@
-from app.crud import CRUD
-from app.utils import strToDatetime, calculateDateFromNow
-from app.models import UpcomingDrop, OpenDrop, Operation
+from .crud import CRUD
+from .utils import strToDatetime, calculateDateFromNow
+from .models import UpcomingDrop, OpenDrop, Operation
 from datetime import datetime
 from datetime import timedelta
 from functools import wraps
@@ -117,6 +117,7 @@ class Operations():
                 
                 end_datetime: datetime = await calculateDateFromNow(time_left)
                 drop: OpenDrop = OpenDrop(website_id=website_id, title=title, end_datetime=end_datetime)
+                print(f'************{drop}************' )
                 await self.crud.add(drop)
 
                 print(i, website_id, end_datetime, title)
@@ -142,6 +143,7 @@ class Operations():
                 
                 open_datetime: datetime = await calculateDateFromNow(date)
                 drop: UpcomingDrop = UpcomingDrop(website_id=website_id, title=title, open_datetime=open_datetime)
+                print(f'************{drop}************' )
                 await self.crud.add(drop)
                 print(i, website_id, date, title)
                 i += 1

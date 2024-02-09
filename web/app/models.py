@@ -6,10 +6,11 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from users.models import User
 
 
 class Cart(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -37,7 +38,7 @@ class Item(models.Model):
 
 
 class Login(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
     success = models.BooleanField()
     date_time = models.DateTimeField()
 
@@ -47,7 +48,7 @@ class Login(models.Model):
 
 
 class Logout(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
     success = models.BooleanField()
     date_time = models.DateTimeField()
 
@@ -67,7 +68,7 @@ class Opendrop(models.Model):
 
 
 class Operation(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
     operation_name = models.CharField()
     success = models.BooleanField()
 
@@ -170,7 +171,7 @@ class AuthUser(models.Model):
 
 class AuthUserGroups(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
     class Meta:
@@ -181,7 +182,7 @@ class AuthUserGroups(models.Model):
 
 class AuthUserUserPermissions(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
     class Meta:
@@ -197,7 +198,7 @@ class DjangoAdminLog(models.Model):
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    user = models.ForeignKey(User, models.DO_NOTHING)
 
     class Meta:
         managed = False

@@ -93,17 +93,28 @@ async def createDatabase() -> None:
         await _connection.run_sync(Base.metadata.create_all)
     await connection.dispose()
 
+async def createBot(bots: int = 1, proxies: bool = False) -> object:
+    from .bot import Bot
+    driver: webdriver.Chrome = createDriver()
+    _bot: Bot = Bot(driver=driver, id=1)
+    return _bot
+
 async def botLoop(bots: int = 1, proxies: bool = False) -> None:
     from .bot import Bot
-    await createDatabase()
-
     driver: webdriver.Chrome = createDriver()
     _bot: Bot = Bot(driver=driver, id=1)
     await _bot.login.loginUser()
     if _bot.operations is not None:
         await _bot.operations.getCartWorth()
         await _bot.operations.emptyCart()
-        await _bot.operations.checkForAlreadyOpenDrops()        
+        await _bot.operations.checkForAlreadyOpenDrops()   
+        await _bot.operations.checkForUpcomingDrops()     
     await _bot.login.logoutUser()
     _bot.driver.quit()
     
+async def loginBot(bots: int = 1, proxies: bool = False) -> None:
+    from .bot import Bot
+    driver: webdriver.Chrome = createDriver()
+    _bot: Bot = Bot(driver=driver, id=1)
+    await _bot.login.loginUser()
+

@@ -1,8 +1,8 @@
-from app import asyncSessionLoader
+from . import asyncSessionLoader
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy.sql.selectable import Select
-from app.models import Operation
+from .models import Operation
 
 class CRUD():
     def __init__(self, id: int):

@@ -1,4 +1,4 @@
-from app import Base
+from . import Base
 from datetime import datetime
 from sqlalchemy import Boolean, DateTime, ForeignKey, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -73,13 +73,13 @@ class Login(Base):
     date_time: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Login"
 
-    def __init__(self, user_id: int, success: bool, date_time: datetime):
+    def __init__(self, user_id: int, success: bool):
         self.user_id: int = user_id
         self.success: bool = success
-        self.date_time:  datetime =  datetime 
+
 
     def __repr__(self):
-        return f"[Login   ][id: {self.id}][user_id: {self.user_id}][success: {self.success}][date: {self.date}]"
+        return f"[Login   ][id: {self.id}][user_id: {self.user_id}][success: {self.success}]"
 
 
 class Logout(Base):
@@ -90,13 +90,12 @@ class Logout(Base):
     date_time: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), nullable=False)
     __tablename__ = "Logout"
 
-    def __init__(self, user_id: int, success: bool, date_time: datetime):
+    def __init__(self, user_id: int, success: bool):
         self.user_id: int = user_id
         self.success: bool = success
-        self.date_time: datetime =  date_time 
 
     def __repr__(self):
-        return f"[Logout   ][id: {self.id}][user_id: {self.user_id}][success: {self.success}][date: {self.date}]"
+        return f"[Logout   ][id: {self.id}][user_id: {self.user_id}][success: {self.success}]"
 
 
 class UpcomingDrop(Base):

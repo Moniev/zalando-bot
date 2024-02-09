@@ -1,6 +1,6 @@
-from app.crud import CRUD
-from app.login import Login
-from app.operations import Operations 
+from .crud import CRUD
+from .login import Login
+from .operations import Operations 
 from selenium import webdriver
 
 class Bot():

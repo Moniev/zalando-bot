@@ -1,7 +1,7 @@
 
-from app.crud import CRUD
-from app.models import Login, Logout as _Login, Logout, Operation
-from app.settings import USER_MAIL, PASSWORD
+from .crud import CRUD
+from .models import Login, Logout as _Login, Logout, Operation
+from .settings import USER_MAIL, PASSWORD
 from datetime import datetime, timedelta
 from functools import wraps
 import inspect
@@ -124,10 +124,11 @@ class Login():
 
             continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
             continue_button.click()
-        else:
+        if self.driver.current_url == "https://www.zalando-lounge.pl/event#":
             self.is_logged_in = True
             
-            login: _Login = _Login(user_id=self.id, success=True, date_time=datetime.now())
+            login: _Login = _Login(user_id=self.id, success=True)
+            print(f'************{login}************' )
             await self.crud.add(login)
 
         if not self.is_logged_in and self.tries < 5:
@@ -149,7 +150,8 @@ class Login():
             logout_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@id="myaccount-menu-link-logout"]')))
             logout_button.click()
             
-            logout: Logout = Logout(user_id=self.id, success=True, date_time=datetime.now())
+            logout: Logout = Logout(user_id=self.id, success=True)
+            print(f'************{logout}************' )
             await self.crud.add(logout)
             
             self.is_logged_in = False

@@ -1,6 +1,8 @@
 
 from .crud import CRUD
-from .models import Login, Logout as _Login, Logout, Operation
+from .models import Login as _Login
+from .models import Logout
+from .models import Operation
 from .settings import USER_MAIL, PASSWORD
 from datetime import datetime, timedelta
 from functools import wraps
@@ -105,6 +107,8 @@ class Login():
             continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
             continue_button.click()
             
+        potential_error = None
+
         if self.driver.current_url != "https://www.zalando-lounge.pl/event#":
             potential_error = self.wait.until(EC.presence_of_all_elements_located((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[1]/div/div')))
             time.sleep(randint(5, 7))
@@ -124,9 +128,10 @@ class Login():
 
             continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
             continue_button.click()
-        if self.driver.current_url == "https://www.zalando-lounge.pl/event#":
-            self.is_logged_in = True
             
+        if self.driver.current_url == "https://www.zalando-lounge.pl/event#":
+            print(f'************SQL TRIGGER************')
+            self.is_logged_in = True
             login: _Login = _Login(user_id=self.id, success=True)
             print(f'************{login}************' )
             await self.crud.add(login)
@@ -135,7 +140,9 @@ class Login():
             time.sleep(randint(4, 5))
             await self.loginUser()
             return
-        if not self.is_logged_in and self.tries > 5:
+        if not self.is_logged_in and self.tries >= 5:
+            login: _Login = _Login(user_id=self.id, success=False)
+            await self.crud.add(login)
             return
             
     async def logoutUser(self) -> None:

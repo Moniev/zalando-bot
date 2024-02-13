@@ -8,7 +8,6 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, username: str, password: str, email: str, **other_fields):
         if not email:
             raise ValueError
-        
         user: AbstractUser = self.model(email=self.normalize_email(email), username=username, date_joined=timezone.now())
         user.set_password(password)
         user.save()
@@ -29,9 +28,7 @@ class User(AbstractUser):
     last_login = models.DateTimeField(null=True)
     last_name = models.CharField(null=True)
     first_name = models.CharField(null=True)
-
     USERNAME_FIELD = 'username'
-
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

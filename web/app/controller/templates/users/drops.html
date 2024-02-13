@@ -1,5 +1,19 @@
 {% extends 'controller/base.html'%}
-
 {% block content %}
-
+    {% for drop in open_drops %}
+    <div class="row row-equal">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-equal">
+            <p>Text</p>
+            <img src="//placehold.it/200x200">
+        </div>
+    </div>
+    {% endfor %}
+    {% for drop in upcoming_drops %}
+    <div class="row row-equal">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-equal">
+            <p>Text</p>
+            <img src="//placehold.it/200x200">
+        </div>
+    </div>
+    {% endfor %}
 {% endblock content%}

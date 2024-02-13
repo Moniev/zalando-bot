@@ -96,15 +96,15 @@ class Login():
             second_login_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-form"]/div/div/div/div/div[2]/div/div[2]/div/div/div/div/div[1]/div/div/div/button')))
             second_login_button.click()
 
-            email = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-email"]')))
-            password = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-password"]')))
+            email = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="login.email"]')))
+            password = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="login.secret"]')))
 
             email.send_keys(USER_MAIL)
             password.send_keys(PASSWORD)
             
             time.sleep(randint(2, 5))
 
-            continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
+            continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="sso"]/div/div[2]/main/div/div[2]/div/div/div/form/button')))
             continue_button.click()
             
         potential_error = None
@@ -115,18 +115,18 @@ class Login():
 
         if self.driver.current_url != "https://www.zalando-lounge.pl/event#" and potential_error is not None:
             self.driver.back()
-            login_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-form"]/div/div/div/div/div[2]/div/div[2]/div/div/div/div/div[1]/div/div/div/button')))
+            login_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="sso"]/div/div[2]/main/div/div[2]/div/div/div/form/button')))
             login_button.click()
 
-            email = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-email"]')))
-            password = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="form-password"]')))
+            email = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="login.email"]')))
+            password = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="login.secret"]')))
 
             email.send_keys(USER_MAIL)
             password.send_keys(PASSWORD)
 
             time.sleep(randint(2, 5))
 
-            continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="react-root-content"]/div/div[2]/div[2]/div[2]/div/div/div/form/button')))
+            continue_button = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="sso"]/div/div[2]/main/div/div[2]/div/div/div/form/button')))
             continue_button.click()
             
         if self.driver.current_url == "https://www.zalando-lounge.pl/event#":

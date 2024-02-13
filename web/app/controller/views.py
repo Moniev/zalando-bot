@@ -43,6 +43,6 @@ def drops(request: HttpRequest) -> HttpResponse:
     upcoming_drops = UpcomingDrop.objects.all()
 
     context: dict = {'open_drops': open_drops, 'upcoming_drops': upcoming_drops}
-    
+    print(context)
     return render(request, 'users/drops.html', context)
 

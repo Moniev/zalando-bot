@@ -1,6 +1,4 @@
-from django.contrib.auth import views as auth_views
 from django.urls import path
-from users.forms import MyLoginView
 import users.views as UsersViews
 from . import views
 

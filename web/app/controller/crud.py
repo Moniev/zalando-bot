@@ -2,6 +2,7 @@ from app import asyncSessionLoader
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy.sql.selectable import Select
+from bot.app import asyncSessionLoader
 
 
 class CRUD():
